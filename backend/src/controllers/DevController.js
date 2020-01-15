@@ -16,7 +16,6 @@ module.exports = {
 
         const user = await getDevInformation(github_username);
 
-        console.log(user.data);
         let dev = await Dev.findOne({ github_username });
 
         if (!dev) {
@@ -94,6 +93,6 @@ module.exports = {
 
         await Dev.deleteOne({ _id: dev_id });
 
-        return res.json({ message: 'User deleted successfully!'})
+        return res.json({ message: 'User deleted successfully!' })
     }
 };
