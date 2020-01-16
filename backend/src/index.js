@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const routes = require('./routes');
 
 const app = express();
@@ -12,6 +13,8 @@ mongoose.connect('mongodb+srv://omnistack:omnistack@omnistack-pfahd.mongodb.net/
     useCreateIndex: true
 });
 
+// app.use(cors({ origin: 'http://localhost:7777' }));
+app.use(cors());
 app.use(express.json());
 
 // Métodos HTTP: GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS
