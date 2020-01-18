@@ -2,6 +2,7 @@ const axios = require('axios');
 const Dev = require('../models/Dev');
 const parseStringAsArray = require('../utils/parseStringAsArray');
 const getDevInformation = require('../utils/getDevInformation');
+const { findConnections, sendMessage } = require('../websocket');
 
 //index: quando quero mostrar uma lista, show: quando quero mostrar um único registro, store: quando quero criar um registro, update: alterar registro,
 //destroy: deletar um registro
@@ -11,10 +12,9 @@ module.exports = {
 
         return res.json(devs);
     },
+
     async store(req, res) {
         const { github_username, techs, latitude, longitude } = req.body;
-
-        const user = await getDevInformation(github_username);
 
         let dev = await Dev.findOne({ github_username });
 
@@ -42,10 +42,18 @@ module.exports = {
                 techs: techsArray,
                 location,
             });
+
+            const sendSocketMessageTo = findConnections(
+                { latitude, longitude },
+                techsArray,
+            )
+
+            sendMessage(sendSocketMessageTo, 'new-dev', dev);
         }
 
         return res.json(dev);
     },
+
     async update(req, res) {
         //Atualizar nome, avatar, bio e localização
         const { latitude, longitude } = req.body;
@@ -82,6 +90,7 @@ module.exports = {
 
         return res.json(dev);
     },
+
     async destroy(req, res) {
         const { dev_id } = req.params;
 
