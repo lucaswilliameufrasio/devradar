@@ -3,6 +3,7 @@ import { StyleSheet, Image, View, Text, TextInput, TouchableOpacity, KeyboardAvo
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { requestPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 
 import api from '../services/api';
 import { connect, disconnect, subscribeToNewDevs } from '../services/socket';
@@ -43,7 +44,7 @@ function Main({ navigation }) {
         disconnect();
 
         const { latitude, longitude } = currentRegion;
-        
+
         connect(
             latitude,
             longitude,
@@ -107,21 +108,27 @@ function Main({ navigation }) {
                     </Marker>
                 ))}
             </MapView>
-
-            <View style={styles.searchForm} >
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Buscar devs por techs..."
-                    placeholderTextColor="#999"
-                    autoCapitalize="words"
-                    autoCorrect={false}
-                    value={techs}
-                    onChangeText={setTechs}
-                />
-                <TouchableOpacity onPress={loadDevs} style={styles.loadButton}>
-                    <MaterialIcons name="my-location" size={20} color="#FFF" />
-                </TouchableOpacity>
-            </View>
+            
+            <KeyboardAvoidingView
+                style={styles.searchFlexBox}
+                behavior="padding"
+                keyboardVerticalOffset={Constants.statusBarHeight + 70}
+            >
+                <View style={styles.searchForm} >
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Buscar devs por techs..."
+                        placeholderTextColor="#999"
+                        autoCapitalize="words"
+                        autoCorrect={false}
+                        value={techs}
+                        onChangeText={setTechs}
+                    />
+                    <TouchableOpacity onPress={loadDevs} style={styles.loadButton}>
+                        <MaterialIcons name="my-location" size={20} color="#FFF" />
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         </>
     );
 }
@@ -151,13 +158,17 @@ const styles = StyleSheet.create({
     devTechs: {
         marginTop: 5,
     },
-    searchForm: {
+    searchFlexBox: {
+        flex: 1,
         position: 'absolute',
-        top: 20,
-        // bottom: 20,
+        bottom: 20,
         left: 20,
         right: 20,
         zIndex: 5,
+        justifyContent: 'flex-end',
+    },
+    searchForm: {
+        // top: 20,
         flexDirection: 'row',
     },
     searchInput: {
