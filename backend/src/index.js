@@ -13,15 +13,20 @@ const server = http.Server(app);
 
 setupWebsocket(server);
 
-mongoose.connect(env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-});
-
 app.use(cors());
 app.use(express.json());
 
 app.use(routes);
 
-server.listen(7777);
+mongoose
+  .connect(env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    server.listen(env.PORT, () => console.log(`Listening on http://localhost:${env.PORT}`));
+  })
+  .catch((error) => {
+    console.error(error);
+  });
